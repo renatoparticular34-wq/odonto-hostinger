@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorriso Prime — Odontologia Estética & Harmonização Facial</title>
+<meta name="description" content="Clínica de odontologia premium. Lentes de contato dental, implantes, reabilitação oral e harmonização facial com planejamento digital 3D.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<style>
+  :root {
+    --black:    #0B0B0B;
+    --off-white:#F9F9F7;
+    --cream:    #EAE3D2;
+    --gold:     #C6A86B;
+    --gold-soft:#D4BC8B;
+    --warm-gray:#8A8275;
+    --mid-gray: #6B655A;
+    --dark-gray:#2A2824;
+    --border:   rgba(198,168,107,0.15);
+
+    --serif:  'Cormorant Garamond', 'Georgia', serif;
+    --sans:   'Inter', -apple-system, system-ui, sans-serif;
+
+    --fs-xs: 11px; --fs-sm: 13px; --fs-base: 15px; --fs-lg: 17px;
+    --fs-xl: 20px; --fs-2xl: 26px; --fs-3xl: 34px; --fs-4xl: 44px;
+    --fs-5xl: 56px; --fs-6xl: 72px; --fs-hero: clamp(48px, 7vw, 80px);
+
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+    --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+    --space-32: 128px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--off-white);
+    color: var(--dark-gray);
+    font-size: var(--fs-base);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection { background: var(--cream); color: var(--black); }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+
+  /* -------------------------------------------------- */
+  /* NAV                                                 */
+  /* -------------------------------------------------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 22px 0;
+    transition: background .5s, backdrop-filter .5s, box-shadow .5s, padding .5s;
+  }
+  .nav.scrolled {
+    padding: 14px 0;
+    background: rgba(249,249,247,0.88);
+    backdrop-filter: blur(22px) saturate(1.2); -webkit-backdrop-filter: blur(22px) saturate(1.2);
+    box-shadow: 0 1px 0 var(--border), 0 8px 30px -12px rgba(0,0,0,0.1);
+  }
+  .nav-inner {
+    max-width: 1320px; margin: 0 auto; padding: 0 var(--space-8);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--serif); font-size: 23px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--black);
+    transition: color .35s;
+  }
+  .nav:not(.scrolled) .logo {
+    color: var(--off-white);
+    text-shadow: 0 2px 28px rgba(0,0,0,0.55), 0 0 1px rgba(255,255,255,0.3);
+  }
+  .nav-links { display: flex; gap: var(--space-8); list-style: none; }
+  .nav-links a {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--warm-gray);
+    transition: color .35s;
+  }
+  .nav:not(.scrolled) .nav-links a {
+    color: rgba(249,249,247,0.78);
+    text-shadow: 0 1px 12px rgba(0,0,0,0.4);
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold);
+    padding: 12px 28px; border: 1px solid var(--gold);
+    border-radius: 100px; transition: all .4s;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--black); }
+  .nav:not(.scrolled) .nav-cta {
+    color: var(--gold-soft);
+    border-color: rgba(212,188,139,0.45);
+    background: linear-gradient(135deg, rgba(198,168,107,0.10), rgba(198,168,107,0.03));
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 10px 30px -12px rgba(0,0,0,0.45);
+  }
+  .nav:not(.scrolled) .nav-cta:hover {
+    background: var(--gold); color: var(--black); border-color: var(--gold);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.3) inset,
+      0 14px 38px -14px rgba(198,168,107,0.6);
+  }
+
+  /* -------------------------------------------------- */
+  /* HERO — minimalist editorial                         */
+  /* -------------------------------------------------- */
+  .hero {
+    position: relative; min-height: 100vh; overflow: hidden;
+    background: var(--black);
+    display: flex; flex-direction: column;
+  }
+  .hero-inner {
+    max-width: 1320px; width: 100%;
+    margin: 0 auto;
+    padding: 140px var(--space-8) var(--space-10);
+    flex: 1;
+    display: flex; flex-direction: column;
+    position: relative; z-index: 3;
+  }
+  /* WebGL shader background (Three.js morphing light) */
+  .hero-shader {
+    position: absolute; inset: 0; z-index: 0;
+    overflow: hidden;
+    opacity: 0.58;
+  }
+  .hero-shader canvas {
+    width: 100% !important; height: 100% !important;
+    display: block;
+  }
+  /* cinematic editorial vignette — deep edges, controlled center */
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 50% at 62% 55%, transparent 0%, rgba(11,11,11,0.55) 48%, rgba(11,11,11,0.92) 85%, rgba(11,11,11,1) 100%),
+      linear-gradient(180deg, rgba(11,11,11,0.72) 0%, rgba(11,11,11,0.25) 18%, transparent 42%, transparent 62%, rgba(11,11,11,0.85) 92%, rgba(11,11,11,1) 100%),
+      linear-gradient(90deg, rgba(11,11,11,0.4) 0%, transparent 22%, transparent 80%, rgba(11,11,11,0.35) 100%);
+  }
+
+  .hero-main {
+    flex: 1;
+    display: grid; grid-template-columns: 1.1fr 0.9fr;
+    align-items: center; gap: clamp(40px, 6vw, 110px);
+    position: relative;
+    min-height: 0;
+    padding-top: var(--space-4);
+  }
+
+  /* LEFT — premium copy column */
+  .hero-content {
+    max-width: 620px;
+    opacity: 0; animation: fadeUp 1.1s .3s ease forwards;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--gold-soft);
+    padding: 10px 20px 10px 18px;
+    border: 1px solid rgba(198,168,107,0.28);
+    background: linear-gradient(135deg, rgba(198,168,107,0.10), rgba(198,168,107,0.04));
+    border-radius: 100px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    margin-bottom: var(--space-10);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 10px 30px -12px rgba(0,0,0,0.35);
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 12px rgba(198,168,107,0.9), 0 0 2px rgba(198,168,107,1);
+    animation: dotPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.55; }
+  }
+  .hero-headline {
+    font-family: var(--serif);
+    font-size: clamp(32px, 3.4vw, 48px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--off-white);
+    margin-bottom: var(--space-6);
+    max-width: 580px;
+  }
+  .hero-headline em {
+    font-style: italic; color: var(--gold-soft); font-weight: 400;
+  }
+  .hero-sub {
+    font-family: var(--sans);
+    font-size: var(--fs-base); font-weight: 300;
+    line-height: 1.75;
+    color: rgba(249,249,247,0.75);
+    max-width: 520px;
+    margin-bottom: var(--space-10);
+  }
+  .hero-ctas {
+    display: flex; gap: var(--space-4); flex-wrap: wrap;
+    margin-bottom: var(--space-12);
+  }
+  .btn-primary {
+    position: relative;
+    display: inline-flex; align-items: center; gap: 14px;
+    font-family: var(--sans); font-size: var(--fs-sm); font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--black);
+    background: linear-gradient(180deg, #D4BC8B 0%, #C6A86B 55%, #B89657 100%);
+    padding: 19px 40px;
+    border-radius: 100px;
+    border: 1px solid rgba(212,188,139,0.6);
+    transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s, filter .4s;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 -1px 0 rgba(0,0,0,0.12) inset,
+      0 22px 50px -16px rgba(198,168,107,0.55),
+      0 6px 18px -6px rgba(0,0,0,0.45);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.4) inset,
+      0 -1px 0 rgba(0,0,0,0.12) inset,
+      0 28px 60px -16px rgba(212,188,139,0.65),
+      0 8px 22px -6px rgba(0,0,0,0.5);
+  }
+  .btn-primary svg { width: 14px; height: 14px; transition: transform .35s; }
+  .btn-primary:hover svg { transform: translateX(4px); }
+  .hero-proofs {
+    list-style: none;
+    display: flex; flex-wrap: wrap;
+    gap: var(--space-5) var(--space-8);
+    padding-top: var(--space-7, 28px);
+    border-top: 1px solid rgba(249,249,247,0.09);
+  }
+  .hero-proofs li {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(249,249,247,0.65);
+  }
+  .hero-proofs svg { width: 14px; height: 14px; color: var(--gold); flex-shrink: 0; }
+
+  /* RIGHT — portrait column */
+  .hero-visual {
+    position: relative;
+    width: 100%;
+    align-self: center;
+    display: flex; justify-content: center; align-items: center;
+    min-height: clamp(480px, 60vh, 720px);
+    transform: translateY(-4%);
+    opacity: 0; animation: fadeUp 1.2s .55s ease forwards;
+  }
+  .hero-portrait-wrap {
+    position: relative;
+    width: 100%; max-width: 520px;
+    display: flex; justify-content: center; align-items: center;
+  }
+  /* warm editorial ambient — wraps the figure from behind */
+  .hero-portrait-wrap::before {
+    content: '';
+    position: absolute;
+    left: -20%; right: -20%;
+    top: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 55% 60% at 50% 45%, rgba(198,168,107,0.16), transparent 72%),
+      radial-gradient(ellipse 30% 30% at 50% 35%, rgba(212,188,139,0.10), transparent 78%);
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero-portrait {
+    position: relative;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    user-select: none; -webkit-user-drag: none;
+    z-index: 2;
+    -webkit-mask-image: linear-gradient(180deg,
+      #000 0%,
+      #000 70%,
+      rgba(0,0,0,0.9) 82%,
+      rgba(0,0,0,0.5) 92%,
+      rgba(0,0,0,0.15) 97%,
+      transparent 100%);
+            mask-image: linear-gradient(180deg,
+      #000 0%,
+      #000 70%,
+      rgba(0,0,0,0.9) 82%,
+      rgba(0,0,0,0.5) 92%,
+      rgba(0,0,0,0.15) 97%,
+      transparent 100%);
+  }
+
+  /* -------------------------------------------------- */
+  /* ANIMATIONS                                          */
+  /* -------------------------------------------------- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* -------------------------------------------------- */
+  /* SECTIONS COMMON                                     */
+  /* -------------------------------------------------- */
+  section { padding: var(--space-32) var(--space-8); }
+  .section-label {
+    font-family: var(--sans); font-size: var(--fs-xs); font-weight: 400;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: var(--space-5);
+  }
+  .section-heading {
+    font-family: var(--serif); font-size: clamp(32px, 5vw, 52px);
+    font-weight: 300; line-height: 1.1; letter-spacing: -0.01em;
+    color: var(--black); margin-bottom: var(--space-6);
+  }
+  .section-heading em { font-style: italic; color: var(--gold); font-weight: 300; }
+  .section-text {
+    font-size: var(--fs-lg); font-weight: 300; color: var(--warm-gray);
+    max-width: 560px; line-height: 1.75;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* -------------------------------------------------- */
+  /* POSITIONING                                         */
+  /* -------------------------------------------------- */
+  .positioning { background: var(--off-white); }
+  .pos-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--space-20); align-items: start;
+    margin-top: var(--space-16);
+  }
+  .pos-items { display: flex; flex-direction: column; gap: var(--space-10); }
+  .pos-item { padding-left: var(--space-8); border-left: 1px solid var(--border); }
+  .pos-item h3 {
+    font-family: var(--serif); font-size: var(--fs-2xl);
+    font-weight: 400; color: var(--black); margin-bottom: var(--space-2);
+  }
+  .pos-item p { font-size: var(--fs-base); color: var(--warm-gray); font-weight: 300; }
+
+  /* -------------------------------------------------- */
+  /* PROCEDURES                                          */
+  /* -------------------------------------------------- */
+  .procedures {
+    background: var(--black); color: var(--off-white);
+  }
+  .procedures .section-heading { color: var(--off-white); }
+  .procedures .section-text { color: rgba(249,249,247,0.5); }
+  .proc-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; margin-top: var(--space-16);
+    background: rgba(249,249,247,0.08);
+  }
+  .proc-card {
+    background: var(--black);
+    padding: var(--space-10) var(--space-8);
+    display: flex; flex-direction: column; gap: var(--space-5);
+    transition: background .4s;
+  }
+  .proc-card:hover { background: rgba(249,249,247,0.03); }
+  .proc-num {
+    font-family: var(--serif); font-size: var(--fs-4xl);
+    font-weight: 300; color: rgba(198,168,107,0.3);
+    line-height: 1;
+  }
+  .proc-card h3 {
+    font-family: var(--serif); font-size: var(--fs-2xl);
+    font-weight: 400; color: var(--off-white); line-height: 1.2;
+  }
+  .proc-for {
+    font-size: var(--fs-sm); color: var(--gold-soft);
+    font-weight: 400; letter-spacing: 0.03em;
+  }
+  .proc-desc {
+    font-size: var(--fs-sm); color: rgba(249,249,247,0.45);
+    font-weight: 300; line-height: 1.7;
+  }
+
+  /* -------------------------------------------------- */
+  /* EXPERIENCE                                          */
+  /* -------------------------------------------------- */
+  .experience { background: var(--cream); }
+  .exp-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8); margin-top: var(--space-16);
+  }
+  .exp-step { display: flex; flex-direction: column; gap: var(--space-4); }
+  .exp-num {
+    font-family: var(--serif); font-size: var(--fs-5xl);
+    font-weight: 300; color: var(--gold); line-height: 1; opacity: 0.5;
+  }
+  .exp-line {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .exp-step h4 {
+    font-family: var(--serif); font-size: var(--fs-xl);
+    font-weight: 400; color: var(--black);
+  }
+  .exp-step p { font-size: var(--fs-sm); color: var(--mid-gray); font-weight: 300; line-height: 1.7; }
+
+  /* -------------------------------------------------- */
+  /* AUTHORITY                                           */
+  /* -------------------------------------------------- */
+  .authority { background: var(--off-white); }
+  .auth-grid {
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: var(--space-20); align-items: center;
+    margin-top: var(--space-16);
+  }
+  .auth-photo {
+    border-radius: 6px; overflow: hidden;
+    background: var(--cream);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.25);
+  }
+  .auth-photo img {
+    width: 100%; height: auto; display: block;
+    object-fit: contain;
+  }
+  .auth-content { display: flex; flex-direction: column; gap: var(--space-6); }
+  .auth-name {
+    font-family: var(--serif); font-size: var(--fs-4xl);
+    font-weight: 300; color: var(--black); line-height: 1.1;
+  }
+  .auth-title {
+    font-size: var(--fs-sm); font-weight: 400; color: var(--gold);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .auth-philosophy {
+    font-family: var(--serif); font-size: var(--fs-2xl);
+    font-weight: 300; font-style: italic; color: var(--dark-gray);
+    line-height: 1.5; border-left: 2px solid var(--gold); padding-left: var(--space-6);
+  }
+  .auth-bio { font-size: var(--fs-base); color: var(--warm-gray); font-weight: 300; line-height: 1.8; }
+  .auth-credentials { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-top: var(--space-4); }
+  .auth-cred {
+    font-size: var(--fs-sm); color: var(--dark-gray); font-weight: 400;
+    padding: 8px 20px; border: 1px solid var(--border);
+    border-radius: 100px;
+  }
+
+  /* -------------------------------------------------- */
+  /* SOCIAL PROOF                                        */
+  /* -------------------------------------------------- */
+  .proof {
+    background: var(--black); color: var(--off-white);
+    overflow: hidden;
+  }
+  .proof .section-heading { color: var(--off-white); }
+  .proof-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; margin-top: var(--space-16);
+    background: rgba(249,249,247,0.06);
+  }
+  .testi {
+    background: var(--black);
+    padding: var(--space-10) var(--space-8);
+    display: flex; flex-direction: column; gap: var(--space-6);
+  }
+  .testi-quote {
+    font-family: var(--serif); font-size: var(--fs-serif, 60px);
+    color: rgba(198,168,107,0.3); line-height: 1; margin-bottom: -20px;
+  }
+  .testi-text {
+    font-family: var(--serif); font-size: var(--fs-xl);
+    font-weight: 300; font-style: italic; color: rgba(249,249,247,0.8);
+    line-height: 1.6; flex: 1;
+  }
+  .testi-author {
+    border-top: 1px solid rgba(249,249,247,0.06);
+    padding-top: var(--space-5);
+  }
+  .testi-name {
+    font-size: var(--fs-sm); font-weight: 500;
+    color: var(--off-white); margin-bottom: 2px;
+  }
+  .testi-role { font-size: var(--fs-xs); color: var(--gold-soft); font-weight: 300; }
+
+  /* -------------------------------------------------- */
+  /* FINAL CTA                                           */
+  /* -------------------------------------------------- */
+  .final-cta {
+    background: var(--cream);
+    text-align: center;
+    padding: var(--space-32) var(--space-8);
+  }
+  .final-cta .section-heading { max-width: 700px; margin: 0 auto var(--space-6); }
+  .final-cta .section-text { max-width: 500px; margin: 0 auto var(--space-10); text-align: center; }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: var(--fs-sm); font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--off-white);
+    background: var(--black); padding: 18px 44px;
+    border-radius: 100px; transition: all .4s;
+  }
+  .cta-btn:hover { background: var(--gold); color: var(--black); }
+  .cta-btn svg { width: 14px; height: 14px; transition: transform .3s; }
+  .cta-btn:hover svg { transform: translateX(3px); }
+  .final-note {
+    margin-top: var(--space-8);
+    font-size: var(--fs-sm); color: var(--mid-gray); font-weight: 300;
+  }
+
+  /* -------------------------------------------------- */
+  /* FOOTER                                              */
+  /* -------------------------------------------------- */
+  footer {
+    background: var(--black); color: rgba(249,249,247,0.4);
+    padding: var(--space-16) var(--space-8) var(--space-10);
+    font-size: var(--fs-sm);
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: start;
+    gap: var(--space-10); flex-wrap: wrap;
+  }
+  .footer-brand .logo { color: var(--off-white); margin-bottom: var(--space-4); display: block; }
+  .footer-brand p { max-width: 300px; line-height: 1.7; font-weight: 300; }
+  .footer-col h5 {
+    font-size: var(--fs-xs); font-weight: 400; color: rgba(249,249,247,0.25);
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: var(--space-5);
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+  .footer-col a { color: rgba(249,249,247,0.5); font-weight: 300; transition: color .3s; }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    max-width: 1200px; margin: var(--space-12) auto 0;
+    padding-top: var(--space-8); border-top: 1px solid rgba(249,249,247,0.06);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4);
+    font-size: var(--fs-xs); color: rgba(249,249,247,0.25); font-weight: 300;
+  }
+  .footer-bottom a { color: rgba(249,249,247,0.25); transition: color .3s; }
+  .footer-bottom a:hover { color: var(--gold-soft); }
+
+  /* -------------------------------------------------- */
+  /* RESPONSIVE                                          */
+  /* -------------------------------------------------- */
+  @media (max-width: 1024px) {
+    .hero-main { grid-template-columns: 1fr; gap: var(--space-10); }
+    .hero-content { max-width: 640px; }
+    .hero-visual { place-items: center; }
+    .hero-portrait-wrap { max-width: 380px; margin: 0 auto; }
+    .proc-grid { grid-template-columns: 1fr 1fr; }
+    .exp-steps { grid-template-columns: 1fr 1fr; gap: var(--space-10); }
+    .auth-grid { grid-template-columns: 1fr; gap: var(--space-10); }
+    .auth-photo { max-width: 400px; }
+  }
+  @media (max-width: 768px) {
+    section { padding: var(--space-20) var(--space-6); }
+    .nav-links { display: none; }
+    .pos-grid { grid-template-columns: 1fr; gap: var(--space-10); }
+    .proc-grid { grid-template-columns: 1fr; }
+    .exp-steps { grid-template-columns: 1fr; }
+    .proof-grid { grid-template-columns: 1fr; }
+    .hero-inner { padding: 120px var(--space-6) var(--space-10); }
+    .hero-headline { font-size: clamp(34px, 9vw, 46px); }
+    .hero-sub { font-size: var(--fs-base); }
+    .hero-ctas { gap: var(--space-3); }
+    .btn-primary, .btn-secondary { padding: 16px 26px; width: 100%; justify-content: center; }
+    .hero-proofs { gap: var(--space-4) var(--space-6); }
+    .hero-portrait-wrap { max-width: 320px; }
+    .footer-inner { flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hero-content, .hero-visual { opacity: 1; animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">Sorriso Prime</a>
+    <ul class="nav-links">
+      <li><a href="#procedimentos">Procedimentos</a></li>
+      <li><a href="#experiencia">Experiencia</a></li>
+      <li><a href="#especialista">Especialista</a></li>
+    </ul>
+    <a href="#agendar" class="nav-cta">Agendar</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-shader" id="heroShader"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-inner">
+    <div class="hero-main">
+      <div class="hero-content">
+        <p class="hero-eyebrow">
+          <span class="dot"></span> Odontologia estetica premium &middot; Sao Paulo
+        </p>
+        <h1 class="hero-headline">
+          Odontologia estetica premium para quem busca um sorriso <em>sofisticado, natural</em> e planejado com precisao.
+        </h1>
+        <p class="hero-sub">
+          Lentes de contato dental, reabilitacao oral e harmonizacao facial com planejamento digital 3D, atendimento exclusivo e resultados pensados para valorizar sua identidade &mdash; sem excessos, sem artificialidade.
+        </p>
+        <div class="hero-ctas">
+          <a href="#agendar" class="btn-primary">
+            Solicitar avaliacao exclusiva
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+          </a>
+        </div>
+        <ul class="hero-proofs">
+          <li>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>
+            Planejamento digital 3D
+          </li>
+          <li>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>
+            Atendimento privativo
+          </li>
+          <li>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4.5"/></svg>
+            Agenda seletiva
+          </li>
+        </ul>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-portrait-wrap">
+          <img class="hero-portrait" src="tamanho-1600x2000.png" alt="Paciente Sorriso Prime" loading="eager" draggable="false">
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- POSITIONING -->
+<section class="positioning" id="diferencial">
+  <div class="container">
+    <div class="pos-grid">
+      <div class="reveal">
+        <p class="section-label">O que nos diferencia</p>
+        <h2 class="section-heading">Nao e apenas um procedimento. E uma <em>experiencia.</em></h2>
+        <p class="section-text">Cada sorriso e planejado com precisao digital antes da execucao. Voce visualiza o resultado, aprova cada detalhe e so entao iniciamos.</p>
+      </div>
+      <div class="pos-items">
+        <div class="pos-item reveal">
+          <h3>Simulacao digital do sorriso</h3>
+          <p>Tecnologia DSD e scanner 3D iTero para que voce veja, aprove e ajuste seu resultado antes de qualquer intervencao.</p>
+        </div>
+        <div class="pos-item reveal">
+          <h3>Filosofia estetica natural</h3>
+          <p>Resultados que respeitam sua harmonia facial. Nada artificial, nada exagerado — apenas a melhor versao do seu sorriso.</p>
+        </div>
+        <div class="pos-item reveal">
+          <h3>Atendimento exclusivo</h3>
+          <p>Agenda limitada. Sala privativa. Acompanhamento personalizado do inicio ao acompanhamento pos-tratamento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCEDURES -->
+<section class="procedures" id="procedimentos">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">Procedimentos</p>
+      <h2 class="section-heading">Excelencia em cada <em>detalhe.</em></h2>
+    </div>
+    <div class="proc-grid">
+      <div class="proc-card reveal">
+        <span class="proc-num">01</span>
+        <h3>Lentes de Contato Dental</h3>
+        <p class="proc-for">Para quem deseja um sorriso alinhado e harmonico</p>
+        <p class="proc-desc">Laminas ultrafinas que transformam forma, cor e alinhamento com minimo desgaste. Resultado em poucos dias, aparencia natural e duradoura.</p>
+      </div>
+      <div class="proc-card reveal">
+        <span class="proc-num">02</span>
+        <h3>Implantes Dentarios</h3>
+        <p class="proc-for">Para quem busca funcionalidade e confianca</p>
+        <p class="proc-desc">Planejamento guiado por computador para posicionamento preciso. Recuperacao da funcao mastigatoria e estetica com total previsibilidade.</p>
+      </div>
+      <div class="proc-card reveal">
+        <span class="proc-num">03</span>
+        <h3>Reabilitacao Oral Completa</h3>
+        <p class="proc-for">Para quem deseja uma transformacao integral</p>
+        <p class="proc-desc">Reestruturacao completa da funcao e estetica oral. Planejamento digital integrado para resultados que devolvem confianca e qualidade de vida.</p>
+      </div>
+      <div class="proc-card reveal">
+        <span class="proc-num">04</span>
+        <h3>Harmonizacao Facial</h3>
+        <p class="proc-for">Para quem busca equilibrio e sofisticacao</p>
+        <p class="proc-desc">Procedimentos complementares que equilibram as proporcoes faciais, realcando a beleza natural com sutileza e refinamento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experiencia">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">A Jornada</p>
+      <h2 class="section-heading">Uma experiencia pensada para <em>voce.</em></h2>
+    </div>
+    <div class="exp-steps">
+      <div class="exp-step reveal">
+        <span class="exp-num">01</span>
+        <div class="exp-line"></div>
+        <h4>Consulta Privada</h4>
+        <p>Avaliacao personalizada em sala privativa. Escuta atenta, diagnostico detalhado e alinhamento completo de expectativas.</p>
+      </div>
+      <div class="exp-step reveal">
+        <span class="exp-num">02</span>
+        <div class="exp-line"></div>
+        <h4>Planejamento Digital</h4>
+        <p>Escaneamento 3D e simulacao visual do resultado. Voce aprova cada detalhe antes de iniciarmos qualquer procedimento.</p>
+      </div>
+      <div class="exp-step reveal">
+        <span class="exp-num">03</span>
+        <div class="exp-line"></div>
+        <h4>Execucao de Precisao</h4>
+        <p>Procedimento realizado com tecnologia de ponta e acompanhamento concierge em todas as etapas.</p>
+      </div>
+      <div class="exp-step reveal">
+        <span class="exp-num">04</span>
+        <div class="exp-line"></div>
+        <h4>Acompanhamento</h4>
+        <p>Consultas de manutencao e suporte continuo. Seu resultado e acompanhado com o mesmo cuidado da execucao.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHORITY -->
+<section class="authority" id="especialista">
+  <div class="container">
+    <p class="section-label reveal">Especialista</p>
+    <div class="auth-grid">
+      <div class="auth-photo reveal">
+        <img src="Dr. Rodrigues em ambiente moderno e acolhedor.png" alt="Dr. Rodrigues" loading="lazy">
+      </div>
+      <div class="auth-content">
+        <div class="reveal">
+          <p class="auth-title">Cirurgiao-Dentista · CRO-XX XXXXX</p>
+          <h3 class="auth-name">Dr. Rodrigues</h3>
+        </div>
+        <p class="auth-philosophy reveal">"Acredito que um sorriso deve revelar quem voce e — nao quem o dentista quis que voce fosse."</p>
+        <p class="auth-bio reveal">Especialista em estetica dental e reabilitacao oral com mais de [X] anos de experiencia clinica. Formacao complementar em Digital Smile Design e harmonizacao orofacial. Atendimento focado em resultados naturais e personalizados.</p>
+        <div class="auth-credentials reveal">
+          <span class="auth-cred">Estetica Dental</span>
+          <span class="auth-cred">Reabilitacao Oral</span>
+          <span class="auth-cred">Digital Smile Design</span>
+          <span class="auth-cred">Harmonizacao Orofacial</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">Depoimentos</p>
+      <h2 class="section-heading">Na voz de quem <em>viveu.</em></h2>
+    </div>
+    <div class="proof-grid">
+      <div class="testi reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Pela primeira vez senti que alguem realmente ouviu o que eu queria. O resultado ficou natural, exatamente como eu imaginava.</p>
+        <div class="testi-author">
+          <p class="testi-name">Carolina M.</p>
+          <p class="testi-role">Empresaria, 42 anos</p>
+        </div>
+      </div>
+      <div class="testi reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Adiei por anos. Quando vi a simulacao do meu sorriso na tela, entendi que estava no lugar certo. A experiencia inteira foi impecavel.</p>
+        <div class="testi-author">
+          <p class="testi-name">Ricardo F.</p>
+          <p class="testi-role">Executivo, 51 anos</p>
+        </div>
+      </div>
+      <div class="testi reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Nao queria nada artificial. Eles entenderam isso desde o primeiro minuto. Hoje sorrio sem pensar — e isso mudou tudo.</p>
+        <div class="testi-author">
+          <p class="testi-name">Juliana P.</p>
+          <p class="testi-role">Advogada, 37 anos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="agendar">
+  <div class="reveal">
+    <p class="section-label">Proximo passo</p>
+    <h2 class="section-heading">Sua avaliacao <em>personalizada.</em></h2>
+    <p class="section-text" style="text-align:center;">Uma conversa privada para entender seus objetivos, apresentar possibilidades e planejar o caminho ate o seu melhor sorriso.</p>
+    <a href="https://wa.me/5500000000000?text=Gostaria%20de%20agendar%20uma%20consulta%20na%20Sorriso%20Prime" class="cta-btn" target="_blank" rel="noopener">
+      Solicitar avaliacao
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+    <p class="final-note">Atendimentos limitados por semana para garantir atencao individual.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="logo">Sorriso Prime</a>
+      <p>Odontologia estetica e harmonizacao facial. Clinica boutique com atendimento exclusivo e planejamento digital.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Contato</h5>
+      <ul>
+        <li><a href="https://wa.me/5500000000000" target="_blank" rel="noopener">(XX) XXXXX-XXXX</a></li>
+        <li><a href="mailto:contato@sorrisoprime.com.br">contato@sorrisoprime.com.br</a></li>
+        <li><a href="#">[Endereco da clinica]</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Institucional</h5>
+      <ul>
+        <li><a href="#">Termos de Uso</a></li>
+        <li><a href="#">Politica de Privacidade</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Sorriso Prime. Todos os direitos reservados.</span>
+    <span>CRO-XX XXXXX &middot; Responsavel Tecnico: Dr. Rodrigues</span>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+/* Nav scroll effect */
+(function() {
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+})();
+
+/* Reveal on scroll (IntersectionObserver) */
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  if (!els.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+/* Hero visual — subtle scroll drift on the centerpiece */
+(function() {
+  const visual = document.querySelector('.hero-visual');
+  const hero = document.querySelector('.hero');
+  if (!visual || !hero) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let y = 0, tY = 0;
+  const compute = () => {
+    const r = hero.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const scrolled = Math.max(0, -r.top);
+    const range = Math.min(hero.offsetHeight, vh);
+    const p = Math.max(0, Math.min(1, scrolled / range));
+    tY = p * 24;
+  };
+  const loop = () => {
+    y += (tY - y) * 0.08;
+    visual.style.transform = `translateY(${y.toFixed(2)}px)`;
+    requestAnimationFrame(loop);
+  };
+  window.addEventListener('scroll', compute, { passive: true });
+  compute(); loop();
+})();
+
+/* Hero morphing-light shader (Three.js) */
+(function() {
+  const container = document.getElementById('heroShader');
+  if (!container || typeof THREE === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const vertexShader = `
+    void main() { gl_Position = vec4(position, 1.0); }
+  `;
+
+  const fragmentShader = `
+    precision highp float;
+    uniform vec2 u_resolution;
+    uniform float u_time;
+
+    // Design-system palette
+    const vec3 BLACK      = vec3(0.043, 0.043, 0.043); // #0B0B0B
+    const vec3 DARK       = vec3(0.090, 0.085, 0.075); // deeper warm black
+    const vec3 GOLD       = vec3(0.776, 0.659, 0.420); // #C6A86B
+    const vec3 GOLD_SOFT  = vec3(0.831, 0.737, 0.545); // #D4BC8B
+    const vec3 CREAM      = vec3(0.918, 0.890, 0.824); // #EAE3D2
+    const vec3 OFFWHITE   = vec3(0.976, 0.976, 0.969); // #F9F9F7
+
+    void main() {
+      vec2 uv = (gl_FragCoord.xy - u_resolution * .5) / u_resolution.yy;
+
+      float angle = -1.5708;
+      mat2 rotation = mat2(cos(angle), -sin(angle),
+                           sin(angle),  cos(angle));
+      uv = rotation * uv;
+
+      float c = distance(uv, vec2(0.0));
+      float a = u_time * 0.45; // slower, meditative cadence
+
+      // soft radial rings — dampened amplitude, editorial
+      float r1 = 0.5 - acos(sin(c * 2.6 + a)) * 0.28;
+      float r2 = 0.5 - acos(sin(c * 5.2 + a * 0.8)) * 0.18;
+
+      // light layered from gold -> gold-soft, cream barely brushing
+      vec3 light = mix(GOLD * 0.85, GOLD_SOFT, r1);
+      light      = mix(light, CREAM * 0.9, r2 * 0.35);
+
+      // subtle warm core — no hot off-white bloom anymore
+      vec3 source = mix(light, GOLD_SOFT, smoothstep(0.45, 0.05, c) * 0.55);
+
+      // vertical hue drift — warm, slow
+      float drift = (uv.y - sin(u_time * 0.3) * 0.1) * 0.5 + 0.5;
+      vec3 hue = mix(GOLD * 0.55, GOLD_SOFT * 0.9, drift);
+
+      vec3 color = mix(source, hue, uv.x * 0.45 + 0.3);
+
+      // pull the edges aggressively toward black for cinematic depth
+      color = mix(color, DARK, smoothstep(0.18, 0.75, c));
+      color = mix(color, BLACK, smoothstep(0.55, 1.1, c));
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  const clock = new THREE.Clock();
+  const camera = new THREE.Camera();
+  camera.position.z = 1;
+
+  const scene = new THREE.Scene();
+  const geometry = new THREE.PlaneGeometry(2, 2);
+  const uniforms = {
+    u_time:       { value: 1.0 },
+    u_resolution: { value: new THREE.Vector2() },
+  };
+  const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const resize = () => {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    renderer.setSize(w, h, false);
+    uniforms.u_resolution.value.x = renderer.domElement.width;
+    uniforms.u_resolution.value.y = renderer.domElement.height;
+  };
+  const animate = () => {
+    uniforms.u_time.value = clock.getElapsedTime();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  };
+
+  resize();
+  window.addEventListener('resize', resize);
+  animate();
+})();
+</script>
+
+</body>
+</html>

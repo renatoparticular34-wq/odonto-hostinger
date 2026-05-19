@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorriso Prime — Design System</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+<style>
+  :root {
+    /* COLORS — Brand (Emerald) */
+    --color-brand-50:  #ECFDF5;
+    --color-brand-100: #D1FAE5;
+    --color-brand-200: #A7F3D0;
+    --color-brand-400: #34D399;
+    --color-brand-500: #10B981; /* accent / CTA */
+    --color-brand-600: #059669; /* primary action */
+    --color-brand-800: #065F46;
+    --color-brand-900: #064E3B;
+    --color-brand-950: #022C22; /* top bar / dark surfaces */
+
+    /* COLORS — Neutrals (Slate) */
+    --color-bg:           #F8FAFC; /* slate-50 — page background */
+    --color-surface:      #FFFFFF; /* cards */
+    --color-border:       #E2E8F0; /* slate-200 */
+    --color-border-muted: #F1F5F9; /* slate-100 */
+    --color-text:         #0F172A; /* slate-900 — headings */
+    --color-text-body:    #475569; /* slate-600 — body */
+    --color-text-muted:   #64748B; /* slate-500 */
+    --color-text-soft:    #94A3B8; /* slate-400 */
+
+    /* Status */
+    --color-success: #10B981;
+    --color-info:    #059669;
+    --color-danger:  #DC2626;
+
+    /* TYPOGRAPHY */
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+    --fs-xs:   12px;
+    --fs-sm:   14px;
+    --fs-base: 16px;
+    --fs-lg:   18px;
+    --fs-xl:   20px;
+    --fs-2xl:  24px;
+    --fs-3xl:  30px;
+    --fs-4xl:  36px;
+    --fs-5xl:  48px;
+    --fs-6xl:  60px;
+
+    --fw-light:    300;
+    --fw-regular:  400;
+    --fw-medium:   500;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+    --fw-extra:    800;
+
+    /* SPACING — base 4px */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  20px;
+    --space-6:  24px;
+    --space-8:  32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+
+    /* RADIUS */
+    --radius-sm:   4px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+    --radius-2xl:  20px;
+    --radius-3xl:  24px;
+    --radius-full: 9999px;
+
+    /* SHADOWS */
+    --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl:   0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl:  0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-brand: 0 10px 30px -10px rgb(16 185 129 / 0.45);
+
+    /* GRADIENTS */
+    --gradient-hero: linear-gradient(135deg, #0F172A 0%, #0F172A 50%, #A7F3D0 100%);
+    --gradient-brand: linear-gradient(135deg, #34D399 0%, #059669 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-text-body);
+    font-size: var(--fs-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    ::selection { background: var(--color-brand-200); color: var(--color-brand-900); }
+  }
+  ::selection { background: var(--color-brand-200); color: var(--color-brand-900); }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--color-brand-950);
+    color: var(--color-brand-50);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-brand-900);
+  }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center; gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .topbar span { display: inline-flex; align-items: center; gap: 6px; }
+  .topbar .dot { color: var(--color-brand-400); }
+
+  /* NAV */
+  .nav {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-4) var(--space-6);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  }
+  .logo {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-weight: var(--fw-extra);
+    font-size: var(--fs-xl);
+    color: var(--color-text);
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--gradient-brand);
+    border-radius: var(--radius-lg);
+    display: grid; place-items: center;
+    color: white; font-weight: var(--fw-extra);
+    box-shadow: var(--shadow-brand);
+  }
+  .nav-links { display: flex; gap: var(--space-6); list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--color-text-body);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--color-brand-600); }
+
+  /* HERO */
+  .hero {
+    background: var(--gradient-hero);
+    color: white;
+    padding: var(--space-20) var(--space-6);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: var(--fw-extra);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-4);
+  }
+  .hero p {
+    font-size: var(--fs-lg);
+    color: rgba(255,255,255,0.8);
+    max-width: 640px;
+    margin: 0 auto var(--space-8);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(52,211,153,0.3);
+    color: var(--color-brand-200);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    margin-bottom: var(--space-6);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* LAYOUT */
+  main { max-width: 1280px; margin: 0 auto; padding: var(--space-16) var(--space-6); }
+  section { margin-bottom: var(--space-20); scroll-margin-top: 100px; }
+  .section-header { margin-bottom: var(--space-8); }
+  .section-num {
+    font-size: var(--fs-xs);
+    color: var(--color-brand-600);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .section-title {
+    font-size: var(--fs-4xl);
+    font-weight: var(--fw-extra);
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    margin: 4px 0 var(--space-2);
+  }
+  .section-desc {
+    font-size: var(--fs-lg);
+    color: var(--color-text-muted);
+    max-width: 680px;
+  }
+
+  /* GRID */
+  .grid { display: grid; gap: var(--space-4); }
+  .grid-colors { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+  /* CARDS */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s, border-color .2s;
+  }
+  .card:hover { box-shadow: var(--shadow-md); border-color: var(--color-brand-200); }
+
+  /* COLOR SWATCH */
+  .swatch {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .swatch:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .swatch-color { height: 96px; }
+  .swatch-info { padding: var(--space-3) var(--space-4); }
+  .swatch-name { font-weight: var(--fw-semibold); color: var(--color-text); font-size: var(--fs-sm); }
+  .swatch-hex { font-size: var(--fs-xs); color: var(--color-text-muted); font-family: ui-monospace, 'Courier New', monospace; }
+  .swatch-token { font-size: 10px; color: var(--color-text-soft); font-family: ui-monospace, monospace; margin-top: 2px; }
+
+  /* ACCENT STRIP */
+  .accent-strip { display: flex; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: var(--space-6); }
+  .accent-strip > div { flex: 1; height: 64px; display: grid; place-items: center; font-size: 10px; font-weight: var(--fw-bold); font-family: ui-monospace, monospace; }
+
+  /* TYPOGRAPHY PREVIEW */
+  .type-row { display: flex; align-items: baseline; gap: var(--space-6); padding: var(--space-4) 0; border-bottom: 1px solid var(--color-border-muted); }
+  .type-row:last-child { border-bottom: none; }
+  .type-label { font-family: ui-monospace, monospace; font-size: var(--fs-xs); color: var(--color-text-muted); width: 140px; flex-shrink: 0; }
+  .type-sample { color: var(--color-text); }
+
+  /* CODE BLOCK */
+  .code-wrap { position: relative; margin-top: var(--space-4); }
+  .code {
+    background: var(--color-brand-950);
+    color: #E2E8F0;
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    font-family: ui-monospace, 'Courier New', monospace;
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .copy-btn {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    background: var(--color-brand-600); color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 10px; font-weight: var(--fw-bold);
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: background .2s;
+  }
+  .copy-btn:hover { background: var(--color-brand-500); }
+  .copy-btn.copied { background: var(--color-brand-400); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-sans);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--color-brand-600); color: white;
+    box-shadow: var(--shadow-brand);
+  }
+  .btn-primary:hover { background: var(--color-brand-500); transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--color-surface); color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+  .btn-secondary:hover { border-color: var(--color-brand-500); color: var(--color-brand-600); }
+  .btn-ghost {
+    background: var(--color-brand-50); color: var(--color-brand-800);
+  }
+  .btn-ghost:hover { background: var(--color-brand-100); }
+  .btn-dark {
+    background: var(--color-brand-950); color: var(--color-brand-50);
+  }
+  .btn-dark:hover { background: var(--color-brand-900); }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: var(--radius-full);
+    font-size: 11px; font-weight: var(--fw-bold);
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .badge-brand { background: var(--color-brand-100); color: var(--color-brand-800); }
+  .badge-success { background: #D1FAE5; color: #065F46; }
+  .badge-muted { background: var(--color-border-muted); color: var(--color-text-muted); }
+
+  /* SPACING SHOWCASE */
+  .space-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; }
+  .space-bar { background: var(--gradient-brand); height: 16px; border-radius: var(--radius-sm); }
+  .space-label { font-family: ui-monospace, monospace; font-size: var(--fs-xs); color: var(--color-text-muted); width: 80px; }
+  .space-px { font-size: var(--fs-xs); color: var(--color-text-soft); }
+
+  /* RADIUS SHOWCASE */
+  .radius-demo {
+    width: 80px; height: 80px;
+    background: var(--gradient-brand);
+    display: grid; place-items: end center;
+    padding-bottom: 8px; color: white;
+    font-size: 10px; font-weight: var(--fw-bold);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* SHADOW SHOWCASE */
+  .shadow-demo {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    text-align: center;
+    font-size: var(--fs-xs);
+    font-family: ui-monospace, monospace;
+    color: var(--color-text-muted);
+    font-weight: var(--fw-semibold);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--color-brand-950);
+    color: var(--color-brand-100);
+    padding: var(--space-12) var(--space-6);
+    text-align: center;
+    font-size: var(--fs-sm);
+  }
+  footer strong { color: white; font-weight: var(--fw-bold); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .section-title { font-size: var(--fs-3xl); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <span><span class="dot">●</span> Design System Documentation</span>
+      <span style="color: var(--color-brand-800);">|</span>
+      <span><span class="dot">●</span> Sorriso Prime — Clínica Odontológica</span>
+    </div>
+    <span><span class="dot">●</span> Voted Best of the Best in Central Jersey</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      Sorriso Prime
+    </div>
+    <ul class="nav-links">
+      <li><a href="#colors">Colors</a></li>
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#spacing">Spacing</a></li>
+      <li><a href="#radius">Radius</a></li>
+      <li><a href="#shadows">Shadows</a></li>
+      <li><a href="#components">Components</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+    </ul>
+    <a href="#tokens" class="btn btn-primary">Get Tokens</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">● Design System v1.0</div>
+  <h1>Sorriso Prime</h1>
+  <p>Um sistema de design limpo e profissional para clínicas odontológicas, construído com paleta Emerald + Slate e tipografia Plus Jakarta Sans.</p>
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+    <a href="#tokens" class="btn btn-primary">Copiar Tokens</a>
+    <a href="#components" class="btn btn-secondary" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">Ver Componentes</a>
+  </div>
+</section>
+
+<main>
+
+<!-- COLORS -->
+<section id="colors">
+  <div class="section-header">
+    <div class="section-num">01 — Fundamentals</div>
+    <h2 class="section-title">Colors</h2>
+    <p class="section-desc">Paleta principal baseada em Emerald (marca) e Slate (neutros). Emerald transmite confiança, saúde e profissionalismo — ideal para o setor de saúde.</p>
+  </div>
+
+  <h3 style="color:var(--color-text); font-size:var(--fs-lg); font-weight:var(--fw-bold); margin-bottom:var(--space-4);">Brand — Emerald</h3>
+  <div class="accent-strip">
+    <div style="background:#ECFDF5; color:#064E3B;">50</div>
+    <div style="background:#D1FAE5; color:#064E3B;">100</div>
+    <div style="background:#A7F3D0; color:#064E3B;">200</div>
+    <div style="background:#34D399; color:#064E3B;">400</div>
+    <div style="background:#10B981; color:white;">500</div>
+    <div style="background:#059669; color:white;">600</div>
+    <div style="background:#065F46; color:white;">800</div>
+    <div style="background:#064E3B; color:white;">900</div>
+    <div style="background:#022C22; color:white;">950</div>
+  </div>
+
+  <div class="grid grid-colors">
+    <div class="swatch"><div class="swatch-color" style="background:#10B981;"></div><div class="swatch-info"><div class="swatch-name">Brand 500 · Accent</div><div class="swatch-hex">#10B981</div><div class="swatch-token">--color-brand-500</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#059669;"></div><div class="swatch-info"><div class="swatch-name">Brand 600 · Primary</div><div class="swatch-hex">#059669</div><div class="swatch-token">--color-brand-600</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#022C22;"></div><div class="swatch-info"><div class="swatch-name">Brand 950 · Dark</div><div class="swatch-hex">#022C22</div><div class="swatch-token">--color-brand-950</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#34D399;"></div><div class="swatch-info"><div class="swatch-name">Brand 400</div><div class="swatch-hex">#34D399</div><div class="swatch-token">--color-brand-400</div></div></div>
+  </div>
+
+  <h3 style="color:var(--color-text); font-size:var(--fs-lg); font-weight:var(--fw-bold); margin:var(--space-10) 0 var(--space-4);">Neutrals — Slate</h3>
+  <div class="grid grid-colors">
+    <div class="swatch"><div class="swatch-color" style="background:#F8FAFC;"></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#F8FAFC</div><div class="swatch-token">--color-bg</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#FFFFFF; border-bottom:1px solid var(--color-border);"></div><div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#FFFFFF</div><div class="swatch-token">--color-surface</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E2E8F0;"></div><div class="swatch-info"><div class="swatch-name">Border</div><div class="swatch-hex">#E2E8F0</div><div class="swatch-token">--color-border</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#94A3B8;"></div><div class="swatch-info"><div class="swatch-name">Text Soft</div><div class="swatch-hex">#94A3B8</div><div class="swatch-token">--color-text-soft</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#64748B;"></div><div class="swatch-info"><div class="swatch-name">Text Muted</div><div class="swatch-hex">#64748B</div><div class="swatch-token">--color-text-muted</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#475569;"></div><div class="swatch-info"><div class="swatch-name">Text Body</div><div class="swatch-hex">#475569</div><div class="swatch-token">--color-text-body</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#0F172A;"></div><div class="swatch-info"><div class="swatch-name">Text · Headings</div><div class="swatch-hex">#0F172A</div><div class="swatch-token">--color-text</div></div></div>
+  </div>
+
+  <div class="code-wrap">
+    <button class="copy-btn" data-copy="colors">COPY</button>
+<pre class="code" id="colors">/* Brand — Emerald */
+--color-brand-50:  #ECFDF5;
+--color-brand-100: #D1FAE5;
+--color-brand-200: #A7F3D0;
+--color-brand-400: #34D399;
+--color-brand-500: #10B981;  /* accent */
+--color-brand-600: #059669;  /* primary CTA */
+--color-brand-800: #065F46;
+--color-brand-900: #064E3B;
+--color-brand-950: #022C22;
+
+/* Neutrals — Slate */
+--color-bg:         #F8FAFC;
+--color-surface:    #FFFFFF;
+--color-border:     #E2E8F0;
+--color-text:       #0F172A;
+--color-text-body:  #475569;
+--color-text-muted: #64748B;</pre>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section id="typography">
+  <div class="section-header">
+    <div class="section-num">02 — Fundamentals</div>
+    <h2 class="section-title">Typography</h2>
+    <p class="section-desc">Plus Jakarta Sans — fonte sans-serif moderna, amigável e profissional. Pesos de 300 a 800 cobrem desde textos finos até títulos de alto impacto.</p>
+  </div>
+
+  <div class="card">
+    <div class="type-row">
+      <div class="type-label">display · 6xl · 800</div>
+      <div class="type-sample" style="font-size:60px; font-weight:800; letter-spacing:-0.02em; line-height:1;">Sorrisos Saudáveis</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">heading · 4xl · 700</div>
+      <div class="type-sample" style="font-size:36px; font-weight:700; letter-spacing:-0.01em;">Cuidado odontológico</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">title · 2xl · 700</div>
+      <div class="type-sample" style="font-size:24px; font-weight:700;">Serviços especializados</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">lead · lg · 500</div>
+      <div class="type-sample" style="font-size:18px; font-weight:500;">Tratamentos modernos para toda a família</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">body · base · 400</div>
+      <div class="type-sample" style="font-size:16px; font-weight:400;">Texto corrido para descrições e parágrafos gerais do site.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">small · sm · 400</div>
+      <div class="type-sample" style="font-size:14px; font-weight:400; color:var(--color-text-muted);">Informações auxiliares e metadados</div>
+    </div>
+    <div class="type-row">
+      <div class="type-label">caption · xs · 600</div>
+      <div class="type-sample" style="font-size:12px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--color-brand-600);">EMERGENCY · 24/7</div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <button class="copy-btn" data-copy="type">COPY</button>
+<pre class="code" id="type">--font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+--fs-xs:   12px;    --fw-light:    300;
+--fs-sm:   14px;    --fw-regular:  400;
+--fs-base: 16px;    --fw-medium:   500;
+--fs-lg:   18px;    --fw-semibold: 600;
+--fs-xl:   20px;    --fw-bold:     700;
+--fs-2xl:  24px;    --fw-extra:    800;
+--fs-3xl:  30px;
+--fs-4xl:  36px;
+--fs-5xl:  48px;
+--fs-6xl:  60px;</pre>
+  </div>
+</section>
+
+<!-- SPACING -->
+<section id="spacing">
+  <div class="section-header">
+    <div class="section-num">03 — Fundamentals</div>
+    <h2 class="section-title">Spacing</h2>
+    <p class="section-desc">Escala baseada em unidade de 4px — múltiplos consistentes para padding, margin e gap.</p>
+  </div>
+
+  <div class="card">
+    <div class="space-row"><div class="space-label">--space-1</div><div class="space-bar" style="width:4px;"></div><div class="space-px">4px</div></div>
+    <div class="space-row"><div class="space-label">--space-2</div><div class="space-bar" style="width:8px;"></div><div class="space-px">8px</div></div>
+    <div class="space-row"><div class="space-label">--space-3</div><div class="space-bar" style="width:12px;"></div><div class="space-px">12px</div></div>
+    <div class="space-row"><div class="space-label">--space-4</div><div class="space-bar" style="width:16px;"></div><div class="space-px">16px</div></div>
+    <div class="space-row"><div class="space-label">--space-6</div><div class="space-bar" style="width:24px;"></div><div class="space-px">24px</div></div>
+    <div class="space-row"><div class="space-label">--space-8</div><div class="space-bar" style="width:32px;"></div><div class="space-px">32px</div></div>
+    <div class="space-row"><div class="space-label">--space-12</div><div class="space-bar" style="width:48px;"></div><div class="space-px">48px</div></div>
+    <div class="space-row"><div class="space-label">--space-16</div><div class="space-bar" style="width:64px;"></div><div class="space-px">64px</div></div>
+    <div class="space-row"><div class="space-label">--space-20</div><div class="space-bar" style="width:80px;"></div><div class="space-px">80px</div></div>
+  </div>
+</section>
+
+<!-- RADIUS -->
+<section id="radius">
+  <div class="section-header">
+    <div class="section-num">04 — Fundamentals</div>
+    <h2 class="section-title">Border Radius</h2>
+    <p class="section-desc">Cantos arredondados modernos — de sutis (cards) a totalmente pill (botões e badges).</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:4px;">4px</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-sm</div></div>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:8px;">8px</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-md</div></div>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:12px;">12px</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-lg</div></div>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:16px;">16px</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-xl</div></div>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:24px;">24px</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-3xl</div></div>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; gap:var(--space-3);"><div class="radius-demo" style="border-radius:9999px;">full</div><div style="font-size:var(--fs-xs); color:var(--color-text-muted); font-family:ui-monospace;">--radius-full</div></div>
+  </div>
+</section>
+
+<!-- SHADOWS -->
+<section id="shadows">
+  <div class="section-header">
+    <div class="section-num">05 — Fundamentals</div>
+    <h2 class="section-title">Shadows</h2>
+    <p class="section-desc">Elevação para criar profundidade. A shadow "brand" usa o tom Emerald para CTAs principais.</p>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="shadow-demo" style="box-shadow: var(--shadow-sm);">shadow-sm</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-md);">shadow-md</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-lg);">shadow-lg</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-xl);">shadow-xl</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-2xl);">shadow-2xl</div>
+    <div class="shadow-demo" style="box-shadow: var(--shadow-brand); color: var(--color-brand-700);">shadow-brand</div>
+  </div>
+</section>
+
+<!-- COMPONENTS -->
+<section id="components">
+  <div class="section-header">
+    <div class="section-num">06 — Building Blocks</div>
+    <h2 class="section-title">Components</h2>
+    <p class="section-desc">Componentes reais com os estilos extraídos — prontos para copiar e usar.</p>
+  </div>
+
+  <h3 style="color:var(--color-text); font-size:var(--fs-lg); font-weight:var(--fw-bold); margin-bottom:var(--space-4);">Buttons</h3>
+  <div class="card" style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center;">
+    <button class="btn btn-primary">Agendar Consulta</button>
+    <button class="btn btn-secondary">Saiba Mais</button>
+    <button class="btn btn-ghost">Ver Serviços</button>
+    <button class="btn btn-dark">Emergência 24/7</button>
+  </div>
+
+  <h3 style="color:var(--color-text); font-size:var(--fs-lg); font-weight:var(--fw-bold); margin:var(--space-10) 0 var(--space-4);">Badges</h3>
+  <div class="card" style="display:flex; gap:var(--space-3); flex-wrap:wrap; align-items:center;">
+    <span class="badge badge-brand">Novo Paciente</span>
+    <span class="badge badge-success">● Disponível</span>
+    <span class="badge badge-muted">Consulta</span>
+  </div>
+
+  <h3 style="color:var(--color-text); font-size:var(--fs-lg); font-weight:var(--fw-bold); margin:var(--space-10) 0 var(--space-4);">Cards</h3>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="logo-mark" style="margin-bottom:var(--space-4);">✓</div>
+      <h4 style="color:var(--color-text); font-weight:var(--fw-bold); margin-bottom:var(--space-2);">Clínica Geral</h4>
+      <p style="font-size:var(--fs-sm);">Limpeza, restauração e prevenção para toda a família.</p>
+    </div>
+    <div class="card">
+      <div class="logo-mark" style="margin-bottom:var(--space-4);">★</div>
+      <h4 style="color:var(--color-text); font-weight:var(--fw-bold); margin-bottom:var(--space-2);">Estética Dental</h4>
+      <p style="font-size:var(--fs-sm);">Clareamento, facetas e design do sorriso personalizado.</p>
+    </div>
+    <div class="card">
+      <div class="logo-mark" style="margin-bottom:var(--space-4);">+</div>
+      <h4 style="color:var(--color-text); font-weight:var(--fw-bold); margin-bottom:var(--space-2);">Ortodontia</h4>
+      <p style="font-size:var(--fs-sm);">Aparelhos tradicionais e alinhadores invisíveis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOKENS -->
+<section id="tokens">
+  <div class="section-header">
+    <div class="section-num">07 — Implementation</div>
+    <h2 class="section-title">Design Tokens</h2>
+    <p class="section-desc">Todos os tokens em um único bloco CSS pronto para importar.</p>
+  </div>
+
+  <div class="code-wrap">
+    <button class="copy-btn" data-copy="tokens">COPY ALL</button>
+<pre class="code" id="tokens">:root {
+  /* ============ COLORS ============ */
+  /* Brand — Emerald */
+  --color-brand-50:  #ECFDF5;
+  --color-brand-100: #D1FAE5;
+  --color-brand-200: #A7F3D0;
+  --color-brand-400: #34D399;
+  --color-brand-500: #10B981;  /* accent */
+  --color-brand-600: #059669;  /* primary CTA */
+  --color-brand-800: #065F46;
+  --color-brand-900: #064E3B;
+  --color-brand-950: #022C22;
+
+  /* Neutrals — Slate */
+  --color-bg:           #F8FAFC;
+  --color-surface:      #FFFFFF;
+  --color-border:       #E2E8F0;
+  --color-border-muted: #F1F5F9;
+  --color-text:         #0F172A;
+  --color-text-body:    #475569;
+  --color-text-muted:   #64748B;
+  --color-text-soft:    #94A3B8;
+
+  /* ============ TYPOGRAPHY ============ */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --fs-xs: 12px;   --fs-sm: 14px;   --fs-base: 16px;
+  --fs-lg: 18px;   --fs-xl: 20px;   --fs-2xl: 24px;
+  --fs-3xl: 30px;  --fs-4xl: 36px;  --fs-5xl: 48px;  --fs-6xl: 60px;
+
+  --fw-light: 300;     --fw-regular: 400;   --fw-medium: 500;
+  --fw-semibold: 600;  --fw-bold: 700;      --fw-extra: 800;
+
+  /* ============ SPACING (base 4px) ============ */
+  --space-1: 4px;    --space-2: 8px;    --space-3: 12px;
+  --space-4: 16px;   --space-5: 20px;   --space-6: 24px;
+  --space-8: 32px;   --space-10: 40px;  --space-12: 48px;
+  --space-16: 64px;  --space-20: 80px;
+
+  /* ============ RADIUS ============ */
+  --radius-sm: 4px;     --radius-md: 8px;     --radius-lg: 12px;
+  --radius-xl: 16px;    --radius-2xl: 20px;   --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* ============ SHADOWS ============ */
+  --shadow-sm:    0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.1);
+  --shadow-2xl:   0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-brand: 0 10px 30px -10px rgb(16 185 129 / 0.45);
+
+  /* ============ GRADIENTS ============ */
+  --gradient-hero:  linear-gradient(135deg, #0F172A 0%, #0F172A 50%, #A7F3D0 100%);
+  --gradient-brand: linear-gradient(135deg, #34D399 0%, #059669 100%);
+}</pre>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section id="quickstart">
+  <div class="section-header">
+    <div class="section-num">08 — Get Started</div>
+    <h2 class="section-title">Quick Start</h2>
+    <p class="section-desc">Como usar o Sorriso Prime em seu projeto.</p>
+  </div>
+
+  <div class="code-wrap">
+    <button class="copy-btn" data-copy="quickstart">COPY</button>
+<pre class="code" id="quickstart">&lt;!-- 1. Import font --&gt;
+&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"&gt;
+
+/* 2. Copy tokens into your CSS */
+@import "sorriso-prime-tokens.css";
+
+/* 3. Use anywhere */
+.my-button {
+  background: var(--color-brand-600);
+  color: white;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  font-weight: var(--fw-semibold);
+  box-shadow: var(--shadow-brand);
+}</pre>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <strong>Sorriso Prime</strong> · Design System v1.0<br>
+  Extraído de Green Brook Family Dentalcare · Plus Jakarta Sans · Emerald + Slate
+</footer>
+
+<script>
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.copy;
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
