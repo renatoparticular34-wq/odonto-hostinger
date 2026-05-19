@@ -1,0 +1,9 @@
+{
+  "name": "odonto-hostinger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sorriso Prime Landing Page",
+  "scripts": {
+    "build": "echo 'Static site' && exit 0"
+  }
+}
